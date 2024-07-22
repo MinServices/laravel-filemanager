@@ -23,8 +23,8 @@
         "ext-exif": "*",
         "laravel/framework": "^9.0|^10.0|^11.0",
         "league/flysystem": "^3.0",
-        "guzzlehttp/guzzle": "7.8.1",
-        "intervention/image-laravel": "^1.2.0"
+        "intervention/image-laravel": "^1.2.0",
+        "guzzlehttp/guzzle": "^7.9"
     },
     "autoload": {
         "psr-4": {
