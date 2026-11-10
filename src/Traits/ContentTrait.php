@@ -9,6 +9,27 @@ use League\Flysystem\FilesystemException;
 
 trait ContentTrait
 {
+    /**
+     * Resolve public URL for a file on disk
+     *
+     * @param string $disk
+     * @param string $path
+     * @return string|null
+     */
+    protected function resolveFileUrl($disk, $path): ?string
+    {
+        try {
+            if ($disk === 'nextcloud') {
+                return Storage::disk($disk)->publicUrl($path);
+            }
+            if ($disk === 's3') {
+                return Storage::disk($disk)->temporaryUrl($path, now()->addWeek(1));
+            }
+            return Storage::disk($disk)->url($path);
+        } catch (\Throwable $e) {
+            return null;
+        }
+    }
 
     /**
      * Get content for the selected disk and path
@@ -56,7 +77,7 @@ trait ContentTrait
      */
     public function filesWithProperties($disk, $path = null): array
     {
-        $content = Storage::disk($disk)->listContents($path ?: '');
+        $content = Storage::disk($disk)->listContents($path ?: '')->toArray();
 
         return $this->filterFile($disk, $content);
     }
@@ -104,10 +125,11 @@ trait ContentTrait
             'filename'   => $pathInfo['filename'],
             'size'       => Storage::disk($disk)->size($path),
             'timestamp'  => Storage::disk($disk)->lastModified($path),
+            'url'        => $this->resolveFileUrl($disk, $path),
         ];
-        if($disk !== 'nextcloud'){
-            $properties['visibility'] =  Storage::disk($disk)->getVisibility($path);
-        }else{
+        if ($disk !== 'nextcloud') {
+            $properties['visibility'] = Storage::disk($disk)->getVisibility($path);
+        } else {
             $properties['visibility'] = 'private';
         }
 
@@ -194,10 +216,10 @@ trait ContentTrait
      */
     protected function filterFile($disk, $content): array
     {
-        // select only dir
+        // select only file
         $filesList = array_filter($content, fn($item) => $item['type'] === 'file');
 
-        $files = array_map(function ($item) {
+        $files = array_map(function ($item) use ($disk) {
             $pathInfo = pathinfo($item['path']);
 
             return [
@@ -210,6 +232,7 @@ trait ContentTrait
                 'size'       => $item['fileSize'],
                 'timestamp'  => $item['lastModified'],
                 'visibility' => $item['visibility'],
+                'url'        => $this->resolveFileUrl($disk, $item['path']),
             ];
         }, $filesList);
 

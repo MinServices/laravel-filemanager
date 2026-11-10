@@ -152,7 +152,7 @@ class TestConfigRepository implements ConfigRepository
 }
 ```
 
-For example see [src/Services/ConfigService/DefaultConfigRepository.php](https://github.com/min9802/filemanager/blob/master/src/Services/ConfigService/DefaultConfigRepository.php)
+For example see [src/Services/ConfigService/DefaultConfigRepository.php](https://github.com/MinServices/laravel-filemanager/blob/main/src/Services/ConfigService/DefaultConfigRepository.php)
 
 ## What's next
 

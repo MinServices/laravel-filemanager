@@ -58,7 +58,7 @@ Route::group([
     Route::get('url', [FileManagerController::class, 'url'])
         ->name('fm.url');
 
-    Route::get('info', [FileManagerController::class, 'info'])
+    Route::match(['get', 'post'], 'info', [FileManagerController::class, 'info'])
         ->name('fm.info');
 
     Route::post('getshare', [FileManagerController::class, 'getshare'])

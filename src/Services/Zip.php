@@ -44,7 +44,10 @@ class Zip
 
         if ($this->createArchive()) {
             return [
-                'result' => [
+                'status'  => 'success',
+                'msg'     => 'zipped',
+                'message' => null,
+                'result'  => [
                     'status'  => 'success',
                     'message' => null,
                 ],
@@ -52,7 +55,10 @@ class Zip
         }
 
         return [
-            'result' => [
+            'status'  => 'warning',
+            'msg'     => 'zipError',
+            'message' => 'zipError',
+            'result'  => [
                 'status'  => 'warning',
                 'message' => 'zipError',
             ],
@@ -68,7 +74,10 @@ class Zip
     {
         if ($this->extractArchive()) {
             return [
-                'result' => [
+                'status'  => 'success',
+                'msg'     => 'unzipped',
+                'message' => null,
+                'result'  => [
                     'status'  => 'success',
                     'message' => null,
                 ],
@@ -76,7 +85,10 @@ class Zip
         }
 
         return [
-            'result' => [
+            'status'  => 'warning',
+            'msg'     => 'zipError',
+            'message' => 'zipError',
+            'result'  => [
                 'status'  => 'warning',
                 'message' => 'zipError',
             ],

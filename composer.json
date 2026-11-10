@@ -11,7 +11,7 @@
         "email": "hotro.minservices@gmail.com",
         "role": "Developer"
     }],
-    "homepage": "https://github.com/min9802/laravel-filemanager",
+    "homepage": "https://github.com/MinServices/laravel-filemanager",
     "license": "MIT",
     "minimum-stability": "stable",
     "prefer-stable": true,
@@ -21,10 +21,10 @@
         "ext-json": "*",
         "ext-fileinfo": "*",
         "ext-exif": "*",
-        "laravel/framework": "^9.0|^10.0|^11.0",
-        "league/flysystem": "^3.0",
-        "intervention/image-laravel": "^1.2.0",
-        "guzzlehttp/guzzle": "^7.9"
+        "laravel/framework": "^9.0|^10.0|^11.0|^12.0|^13.0",
+        "league/flysystem": "^3.35.3",
+        "intervention/image-laravel": "^1.5.0",
+        "guzzlehttp/guzzle": "^7.15.2"
     },
     "autoload": {
         "psr-4": {

@@ -38,18 +38,16 @@ abstract class Transfer
             }
         } catch (\Exception $exception) {
             return [
-                'result' => [
-                    'status'  => 'error',
-                    'message' => $exception->getMessage(),
-                ],
+                'status'  => 'error',
+                'msg'     => $exception->getMessage(),
+                'message' => $exception->getMessage(),
             ];
         }
 
         return [
-            'result' => [
-                'status'  => 'success',
-                'message' => 'copied',
-            ],
+            'status'  => 'success',
+            'msg'     => 'copied',
+            'message' => 'copied',
         ];
     }
 

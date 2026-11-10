@@ -116,7 +116,7 @@ class FileManagerController extends Controller
         return response()->json([
             'result' => [
                 'status' => 'success',
-                'message' => 'diskSelected',
+                'msg' => 'diskSelected',
             ],
         ]);
     }
@@ -132,11 +132,12 @@ class FileManagerController extends Controller
     {
         event(new FilesUploading($request));
 
+        $files = $request->file('files') ?? $request->file('file') ?? [];
         $uploadResponse = $this->fm->upload(
             $request->input('disk'),
             $request->input('path'),
-            $request->file('files'),
-            $request->input('overwrite')
+            $files,
+            $request->boolean('overwrite')
         );
         event(new FilesUploaded($request));
         return response()->json($uploadResponse);
@@ -276,7 +277,8 @@ class FileManagerController extends Controller
         return response()->json(
             $this->fm->info(
                 $request->input('disk'),
-                $request->input('path')
+                $request->input('path'),
+                $request->input('paths')
             )
         );
     }
@@ -307,7 +309,7 @@ class FileManagerController extends Controller
         } else {
             return response()->json([
                 'status' => 'error',
-                'message' => trans('res.notfound'),
+                'msg' => trans('res.notfound'),
             ], 404);
         }
     }
@@ -325,13 +327,13 @@ class FileManagerController extends Controller
             $data = $this->share->createShare($path, $shareType, $expire);
             return response()->json([
                 'status' => 'success',
-                'message' => trans('label.shared'),
+                'msg' => trans('label.shared'),
                 'content' => $data['url'],
             ]);
         } catch (\Exception $e) {
             Log::error('Message :' . $e->getMessage() . '--line: ' . $e->getLine());
             return response()->json([
-                'message' => false,
+                'msg' => false,
             ], 500);
         }
     }
@@ -348,19 +350,19 @@ class FileManagerController extends Controller
             if ($status) {
                 return response()->json([
                     'status' => 'success',
-                    'message' => trans('res.delete.success')
+                    'msg' => trans('res.delete.success')
                 ]);
             } else {
                 return response()->json([
                     'status' => 'error',
-                    'message' => trans('res.delete.fail')
+                    'msg' => trans('res.delete.fail')
                 ], 500);
             }
         } catch (\Exception $e) {
             Log::error('Message :' . $e->getMessage() . '--line: ' . $e->getLine());
             return response()->json([
                 'status' => 'error',
-                'message' => trans('res.delete.fail'),
+                'msg' => trans('res.delete.fail'),
             ], 500);
         }
     }
@@ -381,7 +383,7 @@ class FileManagerController extends Controller
             $request->input('name')
         );
 
-        if ($createDirectoryResponse['result']['status'] === 'success') {
+        if (($createDirectoryResponse['status'] ?? $createDirectoryResponse['result']['status'] ?? null) === 'success') {
             event(new DirectoryCreated($request));
         }
 
@@ -420,7 +422,7 @@ class FileManagerController extends Controller
             $request->input('name')
         );
 
-        if ($createFileResponse['result']['status'] === 'success') {
+        if ($createFileResponse['status'] === 'success') {
             event(new FileCreated($request));
         }
 

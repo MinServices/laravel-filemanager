@@ -23,7 +23,7 @@ php artisan vendor:publish --tag=fm-config
    php artisan migrate
    ```
 5. You can install npm package directly and use it in your vue application - more information about it -
-   [@min98/filemanager](https://github.com/Min9802/ui)
+   [@min98/filemanager](https://github.com/MinServices/ui)
 
 > OR
 

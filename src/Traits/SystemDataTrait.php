@@ -16,25 +16,40 @@ trait SystemDataTrait
      */
     public function SaveToDB($data)
     {
-        try{
+        try {
+            $userId = 1;
+            try {
+                if (auth()->check()) {
+                    $userId = auth()->id();
+                } elseif (config('auth.guards.admin') && auth()->guard('admin')->check()) {
+                    $userId = auth()->guard('admin')->id();
+                }
+            } catch (\Throwable $th) {
+                $userId = 1;
+            }
+
             $dataCreated = FileSystem::updateOrCreate(
-                [ "path" => $data['path']],
                 [
-                    "user_id" => auth()->guard('admin')->user()->id ?? 1,
-                    "disk" => $data['disk'],
-                    "type" => $data['type'],
-                    "basename" => $data['basename'],
-                    "dirname" => $data['dirname'],
-                    "extension" => $data['extension'],
-                    "filename" => $data['filename'],
-                    "size" => $data['size'],
-                    "timestamp" => $data['timestamp'],
-                    "visibility" => $data['visibility'] || 'private',
+                    "disk" => $data['disk'] ?? 'public',
+                    "path" => $data['path'],
+                ],
+                [
+                    "user_id" => $userId ?? 1,
+                    "disk" => $data['disk'] ?? 'public',
+                    "type" => $data['type'] ?? 'file',
+                    "basename" => $data['basename'] ?? basename($data['path']),
+                    "dirname" => $data['dirname'] ?? '',
+                    "extension" => $data['extension'] ?? '',
+                    "filename" => $data['filename'] ?? pathinfo($data['path'], PATHINFO_FILENAME),
+                    "size" => $data['size'] ?? 0,
+                    "timestamp" => $data['timestamp'] ?? time(),
+                    "visibility" => !empty($data['visibility']) && is_string($data['visibility']) ? $data['visibility'] : 'public',
                 ]
             );
             return $dataCreated;
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             Log::error('error save file to DB :' . $e->getMessage() . '--line: ' . $e->getLine());
+            return null;
         }
     }
     /**

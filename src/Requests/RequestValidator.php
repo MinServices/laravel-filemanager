@@ -33,8 +33,9 @@ class RequestValidator extends FormRequest
             'disk' => [
                 'sometimes',
                 'string',
-                function ($attribute, $value, $fail) use($config) {
-                    if (!in_array($value, $config->getDiskList()) ||
+                function ($attribute, $value, $fail) use ($config) {
+                    if (
+                        !in_array($value, $config->getDiskList()) ||
                         !array_key_exists($value, config('filesystems.disks'))
                     ) {
                         return $fail('diskNotFound');
@@ -43,10 +44,17 @@ class RequestValidator extends FormRequest
             ],
             'path' => [
                 'sometimes',
-                'string',
                 'nullable',
+                'string',
                 function ($attribute, $value, $fail) {
-                    if ($value && !Storage::disk($this->input('disk'))->exists($value)
+                    if ($this->routeIs('fm.directoryExists') || $this->is('*/directoryExists')) {
+                        return;
+                    }
+                    if (
+                        $value !== null &&
+                        $value !== '' &&
+                        $value !== '/' &&
+                        !Storage::disk($this->input('disk'))->exists($value)
                     ) {
                         return $fail('pathNotFound');
                     }
